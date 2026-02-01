@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OxyGenZ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- THEME CONFIG --- */
+        :root {
+            --primary: #00b894;       
+            --primary-dark: #008f7a;
+            --accent: #55efc4;        
+            --bg-gradient: linear-gradient(135deg, #ffffff 30%, #c7f0db 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text: #2d3436;
+            --shadow: 0 15px 35px rgba(0, 184, 148, 0.1);
+            
+            /* QUIZ COLORS */
+            --correct-bg: #d1fae5;
+            --correct-border: #10b981;
+            --correct-text: #065f46;
+            --wrong-bg: #fee2e2;
+            --wrong-border: #ef4444;
+            --wrong-text: #991b1b;
+        }
+
+        /* RESET & FONT */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
+        
+        body {
+            background: var(--bg-gradient);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            color: var(--text);
+        }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        button { cursor: pointer; transition: 0.2s; font-family: 'Nunito', sans-serif; }
+        
+        /* TOAST NOTIFICATION */
+        .toast { position: fixed; top: 20px; right: 20px; background: var(--primary-dark); color: white; padding: 15px 25px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 1000; animation: slideIn 0.5s; font-weight: 800; display: flex; align-items: center; gap: 10px;}
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        /* BALOON ANIMATION */
+        #baloon-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+        .baloon { position: absolute; bottom: -50px; font-size: 3rem; animation: floatUp 4s ease-in infinite; opacity: 0; }
+        @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; } }
+
+        /* --- AUTH SECTION --- */
+        #auth-section { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .auth-container {
+            background: rgba(255,255,255,0.9);
+            padding: 50px 40px; width: 450px;
+            border-radius: 35px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            border: 5px solid #ffffff;
+            backdrop-filter: blur(10px);
+        }
+        .logo-emoji { font-size: 5rem; display: block; margin-bottom: -10px; animation: bounce 2s infinite; }
+        .logo-text { font-weight: 800; font-size: 3.5rem; color: var(--primary); margin-bottom: 30px; letter-spacing: -1px; }
+        
+        .auth-box input {
+            width: 100%; padding: 18px; margin: 8px 0;
+            border: 3px solid #edf2f7; border-radius: 18px;
+            font-size: 1.1rem; transition: 0.3s; background: #f7fafc; color: var(--text); font-weight: 600;
+        }
+        .auth-box input:focus { border-color: var(--accent); outline: none; background: white; }
+        
+        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
+        .btn-auth {
+            flex: 1; padding: 15px; border: none; border-radius: 18px;
+            font-weight: 800; font-size: 1.1rem;
+        }
+        .btn-login { background: var(--primary); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 9px 0 var(--primary-dark); }
+        .btn-login:active { transform: translateY(3px); box-shadow: 0 0 0 var(--primary-dark); }
+        .btn-register { background: white; color: var(--primary); border: 3px solid var(--primary); box-shadow: 0 6px 0 #dfe6e9; }
+        .btn-register:hover { background: #f0fff4; transform: translateY(-3px); }
+
+        /* --- DASHBOARD LAYOUT --- */
+        #dashboard-section { display: flex; width: 100%; height: 100%; }
+        
+        .sidebar {
+            width: 280px; background: rgba(255,255,255,0.8);
+            padding: 40px 25px; display: flex; flex-direction: column;
+            border-right: 2px solid white; backdrop-filter: blur(15px);
+        }
+        .user-profile { text-align: center; margin-bottom: 40px; }
+        .avatar {
+            font-size: 4rem; background: #d1f2eb; width: 100px; height: 100px;
+            line-height: 100px; border-radius: 50%; margin: 0 auto 15px;
+            border: 5px solid white; box-shadow: var(--shadow);
+        }
+        .user-name { font-size: 1.4rem; font-weight: 800; margin-bottom: 5px; }
+        .user-badge { background: var(--accent); color: var(--primary-dark); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; }
+
+        .nav-links li {
+            list-style: none; padding: 15px 20px;
+            border-radius: 18px; margin-bottom: 10px; font-weight: 700;
+            color: #636e72; display: flex; align-items: center; gap: 12px; font-size: 1.05rem;
+        }
+        .nav-links li:hover, .nav-links li.active-nav {
+            background: var(--primary); color: white;
+            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3);
+            transform: translateX(5px);
+        }
+
+        .content { flex: 1; padding: 40px; overflow-y: auto; }
+        header { margin-bottom: 35px; display: flex; align-items: center; gap: 15px; }
+        header h1 { font-size: 2.5rem; color: var(--primary-dark); font-weight: 800; }
+        header .header-emoji { font-size: 2.5rem; }
+        
+        .card {
+            background: var(--card-bg); padding: 35px; border-radius: 30px;
+            box-shadow: var(--shadow); margin-bottom: 30px;
+            border: 3px solid white; position: relative; overflow: hidden;
+        }
+
+        /* --- OVERVIEW --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px; }
+        .stat-card {
+            text-align: center; padding: 30px 20px;
+            background: linear-gradient(145deg, #ffffff, #f0f9f4);
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-emoji { font-size: 3rem; margin-bottom: 10px; display: block; }
+        .stat-title { font-weight: 700; color: #b2bec3; font-size: 0.9rem; letter-spacing: 1px; }
+        .stat-value { font-size: 3rem; color: var(--primary); font-weight: 900; }
+        
+        .aqi-container { display: flex; gap: 40px; align-items: center; justify-content: center; padding: 10px; }
+        .aqi-circle {
+            width: 200px; height: 200px; border-radius: 50%;
+            background: white; border: 12px solid #ffeaa7;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1); position: relative;
+        }
+        .aqi-val { font-size: 4.5rem; color: #fab1a0; line-height: 1; font-weight: 900; }
+        .aqi-label { font-size: 1rem; color: #b2bec3; font-weight: 800; }
+        .aqi-emoji { font-size: 5rem; position: absolute; top: -20px; right: -20px; animation: float 3s infinite ease-in-out; }
+
+        /* --- QUIZ SYSTEM (UPDATED STYLES) --- */
+        .quiz-menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .quiz-card-item {
+            background: white; padding: 25px; border-radius: 20px; border: 3px solid #e0f2f1;
+            text-align: center; transition: 0.3s; cursor: pointer;
+        }
+        .quiz-card-item:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .quiz-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
+        .quiz-title { font-weight: 800; font-size: 1.2rem; margin-bottom: 10px; color: var(--text); }
+        .quiz-reward { background: #e0f2f1; color: var(--primary-dark); padding: 5px 10px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; }
+
+        .quiz-active-container { background: #f1f8e9; padding: 30px; border-radius: 25px; }
+        .quiz-progress { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 700; color: #636e72; }
+        .question-text { font-size: 1.3rem; font-weight: 800; margin-bottom: 25px; line-height: 1.5; }
+        
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn {
+            background: white; padding: 18px 25px; border-radius: 15px; border: 3px solid #dfe6e9;
+            text-align: left; font-size: 1.1rem; font-weight: 600; color: var(--text);
+            display: flex; align-items: center; gap: 15px;
+        }
+        .option-btn:hover { background: #e3f2fd; border-color: #64b5f6; }
+        .option-marker { width: 30px; height: 30px; background: #dfe6e9; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 800; color: #636e72; }
+        
+        /* NEW QUIZ FEEDBACK STYLES */
+        .option-btn.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); }
+        .option-btn.correct .option-marker { background: var(--correct-border); color: white; }
+        
+        .option-btn.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong-text); }
+        .option-btn.wrong .option-marker { background: var(--wrong-border); color: white; }
+        
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        .quiz-nav-btns { display: flex; justify-content: space-between; margin-top: 30px; }
+        .nav-btn { padding: 12px 25px; border-radius: 12px; font-weight: 800; border: none; font-size: 1rem; }
+        .btn-prev { background: #b0bec5; color: white; }
+        .btn-next { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--primary-dark); }
+        .btn-next:active { transform: translateY(2px); box-shadow: none; }
+        
+        .btn-submit { background: #ff7675; color: white; width: 100%; margin-top: 20px; padding: 15px; border-radius: 15px; font-size: 1.2rem; font-weight: 800; box-shadow: 0 5px 0 #d63031; border: none; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #d63031; }
+
+        /* --- GAME 2048 --- */
+        .game-container { display: flex; gap: 40px; justify-content: center; align-items: start; }
+        .game-sidebar { flex: 1; max-width: 300px; }
+        .score-box { background: var(--primary); color: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 8px 0 var(--primary-dark); margin-bottom: 25px;}
+        .score-val { font-size: 3rem; font-weight: 900; }
+        .game-board-container { background: #b2bec3; padding: 15px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); border: 5px solid #dfe6e9; }
+        .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .tile { width: 90px; height: 90px; background: rgba(238, 228, 218, 0.5); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 3.5rem; font-weight: 800; transition: all 0.15s ease-in-out; box-shadow: inset 0 3px 5px rgba(255,255,255,0.5), 0 3px 5px rgba(0,0,0,0.05); }
+        .t-2 { background: #eee4da; } .t-4 { background: #ede0c8; } .t-8 { background: #f2b179; color: white; } 
+        .t-16 { background: #f59563; color: white; } .t-32 { background: #f67c5f; color: white; } 
+        .t-64 { background: #f65e3b; color: white; } .t-128 { background: #edcf72; color: white; font-size: 4rem; animation: pulse 1.5s infinite; }
+
+        /* --- LEADERBOARD --- */
+        .rank-card { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; transition: 0.3s; border: 3px solid transparent; }
+        .rank-card:hover { transform: scale(1.02); }
+        .rank-num { font-size: 2rem; font-weight: 800; width: 50px; text-align: center; }
+        .rank-name { font-size: 1.3rem; font-weight: 700; }
+        .rank-score { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .rank-1 { border-color: #ffd700; background: #fffde7; } .rank-1 .rank-num { color: #f1c40f; }
+        .rank-2 { border-color: #bdc3c7; background: #f5f6fa; } .rank-2 .rank-num { color: #95a5a6; }
+        .rank-3 { border-color: #d35400; background: #fbe9e7; } .rank-3 .rank-num { color: #d35400; }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast hidden"><span>🔔</span> <span id="toast-msg">Notification</span></div>
+    <div id="baloon-container"></div>
+
+    <section id="auth-section" class="active">
+        <div class="auth-container">
+            <span class="logo-emoji">🌱</span>
+            <h1 class="logo-text">OxyGenZ</h1>
+            <div class="auth-box">
+                <input type="text" id="auth-user" placeholder="Username">
+                <input type="password" id="auth-pass" placeholder="Password">
+                <div class="btn-group">
+                    <button class="btn-auth btn-login" onclick="attemptLogin()">Log In 🚀</button>
+                    <button class="btn-auth btn-register" onclick="attemptRegister()">Register ✨</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard-section" class="hidden">
+        <nav class="sidebar">
+            <div class="user-profile">
+                <div class="avatar">👤</div>
+                <h3 id="display-username" class="user-name">User</h3>
+                <span class="user-badge">Level 1 Recycler</span>
+            </div>
+            <ul class="nav-links">
+                <li onclick="showPage('overview')" id="nav-overview"><span>🏠</span> Overview</li>
+                <li onclick="showPage('missions')" id="nav-missions"><span>🎯</span> Missions</li>
+                <li onclick="showPage('game')" id="nav-game"><span>🎮</span> Game Area</li>
+                <li onclick="showPage('leaderboard')" id="nav-leaderboard"><span>🏆</span> Leaderboard</li>
+                <li onclick="logout()" class="logout-btn" style="margin-top: auto; color: #d63031;"><span>🚪</span> Logout</li>
+            </ul>
+        </nav>
+        <main class="content">
+            <div id="page-overview" class="page active">
+                <header><span class="header-emoji">📊</span><h1>Dashboard Overview</h1></header>
+                <div class="stats-grid">
+                    <div class="card stat-card"><span class="stat-emoji">🏆</span><span class="stat-title">TOTAL POINTS</span><h1 id="stat-points" class="stat-value">0</h1></div>
+                    <div class="card stat-card"><span class="stat-emoji">🎫</span><span class="stat-title">YOUR TOKENS</span><h1 id="stat-tokens" class="stat-value">0</h1></div>
+                    <div class="card stat-card"><span class="stat-emoji">♻️</span><span class="stat-title">AQI CLEANED</span><h1 id="stat-cleaned" class="stat-value">0</h1></div>
+                </div>
+                <div class="card aqi-box">
+                    <div class="aqi-container">
+                        <div class="aqi-circle">
+                            <span id="aqi-emoji" class="aqi-emoji">🌫️</span>
+                            <span id="aqi-val" class="aqi-val">150</span>
+                            <small class="aqi-label">CURRENT AQI</small>
+                        </div>
+                        <div><h2>Air Quality Status:</h2><h1 id="aqi-status" style="font-size: 2.5rem; color: #fab1a0; font-weight: 800;">UNHEALTHY</h1></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-missions" class="page hidden">
+                <header><span class="header-emoji">🎯</span><h1>Missions & Challenges</h1></header>
+                <div class="card" id="quiz-menu-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>📝 Quizzes</h2><span style="font-weight:700; color:#636e72;">Completed: <span id="quizzes-completed">0</span>/4</span>
+                    </div>
+                    <div id="quiz-menu" class="quiz-menu-grid"></div>
+                </div>
+
+                <div class="card hidden" id="quiz-interface-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2 id="active-quiz-title">Quiz Title</h2>
+                        <button onclick="closeQuiz()" style="background:#e0e0e0; border:none; padding:8px 15px; border-radius:10px; font-weight:bold;">✕ Exit</button>
+                    </div>
+                    <div id="quiz-game-area" class="quiz-active-container">
+                        <div class="quiz-progress">
+                            <span id="q-progress-text">Question 1 of 5</span>
+                            <span id="q-score-preview" style="color:var(--primary);">Score: 0</span>
+                        </div>
+                        <p id="q-text" class="question-text">Question goes here...</p>
+                        <div id="q-options" class="quiz-options"></div>
+                        <div class="quiz-nav-btns">
+                            <button id="btn-prev" class="nav-btn btn-prev" onclick="prevQuestion()" style="visibility:hidden;">⬅ Prev</button>
+                            <button id="btn-next" class="nav-btn btn-next" onclick="nextQuestion()">Next ➡</button>
+                        </div>
+                        <button id="btn-submit-quiz" class="btn-submit hidden" onclick="submitQuiz()">✅ Finish & Collect Reward</button>
+                    </div>
+                    <div id="quiz-result-view" class="hidden" style="text-align:center; padding:30px;">
+                        <span style="font-size:5rem;">🎉</span>
+                        <h2 style="font-size:2rem; margin:10px 0;">Quiz Completed!</h2>
+                        <p style="font-size:1.2rem; color:#636e72;">You Scored:</p>
+                        <h1 id="final-score-display" style="font-size:4rem; color:var(--primary); margin:10px 0;">50</h1>
+                        <p>Reward: 🏆 +<span id="reward-pts">50</span> Pts & 🎫 +2 Tokens</p>
+                        <button onclick="closeQuiz()" style="background:var(--primary); color:white; padding:15px 30px; border-radius:15px; border:none; font-weight:800; margin-top:20px; font-size:1.1rem;">Awesome! 😎</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header style="margin-bottom: 20px;"><span class="header-emoji">⚡</span><h2>Weekly Actions</h2></header>
+                    <div id="challenges-container"></div>
+                </div>
+            </div>
+
+            <div id="page-game" class="page hidden">
+                <header><span class="header-emoji">🎮</span><h1>Pollution to Solution</h1></header>
+                <div class="game-container">
+                    <div class="game-sidebar">
+                        <div class="score-box"><span class="score-label">GAME SCORE</span><h1 id="game-score" class="score-val">0</h1></div>
+                        <div class="card" style="padding: 20px; text-align: center; background: #ffeaa7; border-color: #fdcb6e;">
+                            <h3 style="color: #d35400; margin-bottom: 10px;">🌱 MISSION:</h3><p style="font-weight: 700;">Merge tiles to find the Plant!</p>
+                        </div>
+                        <p style="text-align: center; margin: 20px 0; font-weight: 700; color: #636e72;">👉 Use Arrow Keys to Play</p>
+                        <button onclick="initGame()" style="width: 100%; padding: 15px; font-weight: 800; background:var(--accent); border:none; border-radius:15px; color:var(--primary-dark);">🔄 Restart Game</button>
+                    </div>
+                    <div class="game-board-container"><div class="game-grid" id="game-board"></div></div>
+                </div>
+            </div>
+
+            <div id="page-leaderboard" class="page hidden">
+                <header><span class="header-emoji">🏆</span><h1>Global Leaderboard</h1></header>
+                <div id="leaderboard-list"></div>
+            </div>
+        </main>
+    </section>
+
+    <script>
+        // --- DATA ---
+        const DB_KEY = 'oxygenz_v3_db'; const CURRENT_USER_KEY = 'oxygenz_v3_curr';
+        
+        const QUIZ_PACKAGES = [
+            { id: 1, title: "Indoor Air Quality", icon: "🏠", questions: [{q: "What is a common source of indoor pollution?", options: ["LED bulbs", "Cooking fumes", "Open windows", "Plants"], ans: 1}, {q: "Which toxic gas is odorless?", options: ["Carbon Monoxide", "Sulfur Dioxide", "Oxygen", "Helium"], ans: 0}, {q: "What does a HEPA filter do?", options: ["Heats air", "Traps particles", "Adds scent", "Measures temp"], ans: 1}, {q: "High humidity leads to?", options: ["Dust", "Mold", "Ozone", "Carbon"], ans: 1}, {q: "What are VOCs?", options: ["Vitamins", "Gases from paints", "Bacteria", "Solar energy"], ans: 1}] },
+            { id: 2, title: "Sustainable Living", icon: "🌱", questions: [{q: "Most effective '3 Rs'?", options: ["Recycle", "Reuse", "Reduce", "Repaint"], ans: 2}, {q: "Most efficient lightbulb?", options: ["Incandescent", "Halogen", "LED", "Fluorescent"], ans: 2}, {q: "What is Composting?", options: ["Burning trash", "Organic waste to soil", "Throwing plastic", "Compressing cans"], ans: 1}, {q: "Diet with lowest carbon footprint?", options: ["Plant-based", "Red meat", "Processed food", "Imported food"], ans: 0}, {q: "'Vampire Power' refers to?", options: ["Solar at night", "Electronics off but plugged", "Batteries leaking", "Bats"], ans: 1}] },
+            { id: 3, title: "Pollution & Health", icon: "🫁", questions: [{q: "Why is PM2.5 dangerous?", options: ["Radioactive", "Sharp", "Enters bloodstream", "Smells bad"], ans: 2}, {q: "Long-term pollution links to?", options: ["Better immune", "Respiratory disease", "Height", "Vision"], ans: 1}, {q: "Most vulnerable group?", options: ["Teenagers", "Children & Elderly", "Office workers", "Athletes"], ans: 1}, {q: "What is Smog?", options: ["Cloud", "Smoke + Fog", "Rock", "Rainstorm"], ans: 1}, {q: "Noise pollution causes?", options: ["Clean air", "Stress & Hearing loss", "Sleep", "Warming"], ans: 1}] },
+            { id: 4, title: "Energy & Resources", icon: "⚡", questions: [{q: "Which is renewable?", options: ["Coal", "Gas", "Wind Energy", "Nuclear"], ans: 2}, {q: "Disadvantage of fossil fuels?", options: ["Expensive", "Greenhouse gases", "Hard to find", "Renewable"], ans: 1}, {q: "Geothermal energy comes from?", options: ["Sun", "Wind", "Heat inside Earth", "Tides"], ans: 2}, {q: "Benefit of EVs?", options: ["Quieter", "Zero tailpipe emissions", "Faster", "No energy"], ans: 1}, {q: "Solar panels convert?", options: ["Light back to space", "Sunlight to electricity", "Heat roof", "Grow plants"], ans: 1}] }
+        ];
+
+        const CHALLENGES = [
+            {id: 1, title: "Open Windows", desc: "Ventilate for 10 mins", pts: 50, icon: "🪟"},
+            {id: 2, title: "Add a Plant", desc: "Place a Snake Plant inside", pts: 100, icon: "🪴"},
+            {id: 3, title: "Clean Dust", desc: "Wipe surfaces", pts: 75, icon: "🧹"},
+            {id: 4, title: "Use Air Purifier", desc: "Run BioBloom for 1 hour", pts: 80, icon: "💨"}
+        ];
+
+        let currentUser = null; let userData = {};
+        let activeQuiz = null; let currentQIdx = 0; let quizAnswers = []; 
+
+        window.onload = () => { checkLogin(); };
+        function checkLogin() { const u = localStorage.getItem(CURRENT_USER_KEY); if(u){ currentUser=u; loadUserData(); showDashboard(); } else { document.getElementById('auth-section').classList.remove('hidden'); } }
+        function loadUserData() { const db = JSON.parse(localStorage.getItem(DB_KEY)) || {}; userData = db[currentUser]; updateUI(); }
+        function saveUserData() { const db = JSON.parse(localStorage.getItem(DB_KEY)) || {}; db[currentUser] = userData; localStorage.setItem(DB_KEY, JSON.stringify(db)); updateUI(); }
+
+        function updateUI() {
+            document.getElementById('display-username').innerText = currentUser;
+            document.getElementById('stat-points').innerText = userData.points;
+            document.getElementById('stat-tokens').innerText = userData.tokens;
+            document.getElementById('stat-cleaned').innerText = userData.cleaned;
+            
+            let aqi = 150 - userData.cleaned; if(aqi<50) aqi=50;
+            document.getElementById('aqi-val').innerText = aqi;
+            const stat = document.getElementById('aqi-status'); const circ = document.querySelector('.aqi-circle'); const em = document.getElementById('aqi-emoji');
+            if(aqi>100){ stat.innerText="UNHEALTHY"; stat.style.color="#fab1a0"; circ.style.borderColor="#fab1a0"; em.innerText="🌫️"; }
+            else if(aqi>70){ stat.innerText="MODERATE"; stat.style.color="#ffeaa7"; circ.style.borderColor="#ffeaa7"; em.innerText="😐"; }
+            else{ stat.innerText="EXCELLENT"; stat.style.color="#55efc4"; circ.style.borderColor="#55efc4"; em.innerText="✨"; }
+
+            const cCont = document.getElementById('challenges-container'); cCont.innerHTML='';
+            CHALLENGES.forEach(c => {
+                const done = userData.completedChallenges.includes(c.id);
+                const btn = done ? '<button disabled style="background:#b2bec3;color:white;border:none;padding:8px 15px;border-radius:10px;">Done</button>' : `<button onclick="doChallenge(${c.id},${c.pts})" style="background:var(--accent);border:none;padding:8px 15px;border-radius:10px;font-weight:800;color:var(--primary-dark);">Complete</button>`;
+                cCont.innerHTML += `<div class="rank-card" style="padding:15px;"><div><span style="font-size:1.5rem;margin-right:10px;">${c.icon}</span><b>${c.title}</b></div>${btn}</div>`;
+            });
+
+            const qMenu = document.getElementById('quiz-menu'); qMenu.innerHTML = '';
+            let completedCount = 0;
+            QUIZ_PACKAGES.forEach(pkg => {
+                const isDone = userData.completedQuizzes && userData.completedQuizzes.includes(pkg.id);
+                if(isDone) completedCount++;
+                const statusHtml = isDone ? '<span style="color:var(--primary); font-weight:800;">✅ Completed</span>' : '<span class="quiz-reward">🏆 +50 Pts</span>';
+                const clickAction = isDone ? `showToast("You already finished this quiz!")` : `initQuiz(${pkg.id})`;
+                const opacity = isDone ? 'opacity: 0.6;' : '';
+                qMenu.innerHTML += `<div class="quiz-card-item" onclick='${clickAction}' style="${opacity}"><span class="quiz-icon">${pkg.icon}</span><h3 class="quiz-title">${pkg.title}</h3>${statusHtml}</div>`;
+            });
+            document.getElementById('quizzes-completed').innerText = completedCount;
+        }
+
+        // --- UPDATED QUIZ LOGIC ---
+        function initQuiz(pkgId) {
+            activeQuiz = QUIZ_PACKAGES.find(p => p.id === pkgId);
+            currentQIdx = 0;
+            quizAnswers = new Array(activeQuiz.questions.length).fill(null); 
+            document.getElementById('quiz-menu-card').classList.add('hidden');
+            document.getElementById('quiz-interface-card').classList.remove('hidden');
+            document.getElementById('active-quiz-title').innerText = activeQuiz.title;
+            document.getElementById('quiz-result-view').classList.add('hidden');
+            document.getElementById('quiz-game-area').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = activeQuiz.questions[currentQIdx];
+            document.getElementById('q-progress-text').innerText = `Question ${currentQIdx + 1} of ${activeQuiz.questions.length}`;
+            document.getElementById('q-text').innerText = q.q;
+            
+            const optDiv = document.getElementById('q-options'); optDiv.innerHTML = '';
+            const userAnswer = quizAnswers[currentQIdx];
+            const isAnswered = userAnswer !== null;
+
+            q.options.forEach((opt, idx) => {
+                let btnClass = "option-btn";
+                // Logic pewarnaan tombol
+                if (isAnswered) {
+                    btnClass += " disabled"; // Kunci semua tombol
+                    if (idx === q.ans) btnClass += " correct"; // Jawaban benar selalu hijau
+                    else if (idx === userAnswer) btnClass += " wrong"; // Jawaban salah jadi merah
+                }
+                const letters = ['A','B','C','D'];
+                optDiv.innerHTML += `<button class="${btnClass}" onclick="selectAnswer(${idx})"><span class="option-marker">${letters[idx]}</span> ${opt}</button>`;
+            });
+
+            document.getElementById('btn-prev').style.visibility = currentQIdx === 0 ? 'hidden' : 'visible';
+            const nextBtn = document.getElementById('btn-next'); const submitBtn = document.getElementById('btn-submit-quiz');
+            if (currentQIdx === activeQuiz.questions.length - 1) { nextBtn.classList.add('hidden'); submitBtn.classList.remove('hidden'); } 
+            else { nextBtn.classList.remove('hidden'); submitBtn.classList.add('hidden'); }
+        }
+
+        function selectAnswer(ansIdx) {
+            // Jika sudah dijawab, jangan lakukan apa-apa
+            if (quizAnswers[currentQIdx] !== null) return;
+            
+            // Simpan jawaban
+            quizAnswers[currentQIdx] = ansIdx;
+            
+            // Cek Benar/Salah untuk Feedback Toast
+            if (ansIdx === activeQuiz.questions[currentQIdx].ans) {
+                showToast("Correct! 🎉");
+            } else {
+                showToast("Oops! Incorrect 😅");
+            }
+            
+            // Render ulang untuk update warna tombol
+            renderQuestion();
+        }
+
+        function nextQuestion() { if(currentQIdx < activeQuiz.questions.length - 1) { currentQIdx++; renderQuestion(); } }
+        function prevQuestion() { if(currentQIdx > 0) { currentQIdx--; renderQuestion(); } }
+
+        function submitQuiz() {
+            if(quizAnswers.includes(null)) { showToast("Please answer all questions first! ⚠️"); return; }
+            let score = 0;
+            activeQuiz.questions.forEach((q, i) => { if(quizAnswers[i] === q.ans) score += 10; });
+            if(!userData.completedQuizzes) userData.completedQuizzes = [];
+            userData.completedQuizzes.push(activeQuiz.id);
+            userData.points += score; userData.tokens += 2;
+            saveUserData();
+            document.getElementById('quiz-game-area').classList.add('hidden');
+            document.getElementById('quiz-result-view').classList.remove('hidden');
+            document.getElementById('final-score-display').innerText = score;
+            document.getElementById('reward-pts').innerText = score;
+            triggerBalloons();
+        }
+
+        function closeQuiz() { document.getElementById('quiz-interface-card').classList.add('hidden'); document.getElementById('quiz-menu-card').classList.remove('hidden'); updateUI(); }
+
+        // --- AUTH ---
+        function attemptRegister() {
+            const u = document.getElementById('auth-user').value; const p = document.getElementById('auth-pass').value;
+            if(!u || !p) return showToast("Fill all fields!");
+            const db = JSON.parse(localStorage.getItem(DB_KEY)) || {};
+            if(db[u]) return showToast("User taken!");
+            db[u] = { pass:p, points:0, tokens:5, cleaned:0, completedChallenges:[], completedQuizzes:[] };
+            localStorage.setItem(DB_KEY, JSON.stringify(db)); showToast("Success! Log In now.");
+        }
+        function attemptLogin() {
+            const u = document.getElementById('auth-user').value; const p = document.getElementById('auth-pass').value;
+            const db = JSON.parse(localStorage.getItem(DB_KEY)) || {};
+            if(!db[u] || db[u].pass !== p) return showToast("Invalid Login");
+            localStorage.setItem(CURRENT_USER_KEY, u); currentUser=u; loadUserData(); showDashboard();
+        }
+        function logout() { localStorage.removeItem(CURRENT_USER_KEY); location.reload(); }
+        function showDashboard() { document.getElementById('auth-section').classList.add('hidden'); document.getElementById('dashboard-section').classList.remove('hidden'); showPage('overview'); }
+        function showPage(pid) {
+            document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden')); document.getElementById(`page-${pid}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-links li').forEach(e=>e.classList.remove('active-nav')); document.getElementById(`nav-${pid}`).classList.add('active-nav');
+            if(pid==='game') { window.addEventListener('keydown', handleGameKey); if(gameBoard.every(r=>r.every(v=>v===0))) initGame(); } else window.removeEventListener('keydown', handleGameKey);
+            if(pid==='leaderboard') renderLeaderboard();
+        }
+        function doChallenge(id, pts) { userData.completedChallenges.push(id); userData.points+=pts; userData.cleaned+=20; saveUserData(); showToast(`+${pts} Pts!`); triggerBalloons(); }
+        function showToast(m) { const t=document.getElementById('toast'); t.querySelector('span:last-child').innerText=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),2000); }
+        function triggerBalloons() { const c=document.getElementById('baloon-container'); for(let i=0;i<15;i++){ const b=document.createElement('div'); b.className='baloon'; b.innerText=['🎈','🎉','✨'][Math.floor(Math.random()*3)]; b.style.left=Math.random()*100+'%'; b.style.animationDelay=Math.random()*2+'s'; c.appendChild(b); setTimeout(()=>b.remove(),4000); } }
+
+        // --- GAME 2048 ---
+        let gameBoard=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; let gameScore=0;
+        function initGame(){ gameBoard=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; gameScore=0; addTile(); addTile(); drawBoard(); }
+        function drawBoard(){ const d=document.getElementById('game-board'); d.innerHTML=''; gameBoard.forEach(r=>r.forEach(v=>{ const t=document.createElement('div'); t.className=`tile t-${v}`; t.innerText=v>0?getIcon(v):''; d.appendChild(t); })); document.getElementById('game-score').innerText=gameScore; }
+        function getIcon(v){ const i={2:'🌫️',4:'🚗',8:'🏭',16:'😶‍🌫️',32:'⚡',64:'🫁',128:'🌱'}; return i[v]||v; }
+        function addTile(){ let e=[]; for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(gameBoard[r][c]===0)e.push({r,c}); if(e.length){ const s=e[Math.floor(Math.random()*e.length)]; gameBoard[s.r][s.c]=2; } }
+        function handleGameKey(e){ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){ e.preventDefault(); let m=false; if(e.key==='ArrowUp')m=move(0); if(e.key==='ArrowRight')m=move(1); if(e.key==='ArrowDown')m=move(2); if(e.key==='ArrowLeft')m=move(3); if(m){ addTile(); drawBoard(); if(gameBoard.some(r=>r.some(v=>v>=128))) {showToast("WINNER!"); triggerBalloons();} } } }
+        function move(dir){ /* Logic simplified for demo */ let m=false; const rot=dir===0?3:dir===1?2:dir===2?1:0; for(let i=0;i<rot;i++) rotate(); 
+        for(let r=0;r<4;r++){ let row=gameBoard[r].filter(v=>v); for(let i=0;i<row.length-1;i++){ if(row[i]===row[i+1]){ row[i]*=2; gameScore+=row[i]; row[i+1]=0; } } row=row.filter(v=>v); while(row.length<4)row.push(0); if(JSON.stringify(gameBoard[r])!==JSON.stringify(row))m=true; gameBoard[r]=row; }
+        for(let i=0;i<(4-rot)%4;i++) rotate(); return m; }
+        function rotate(){ let n=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; for(let r=0;r<4;r++)for(let c=0;c<4;c++)n[c][3-r]=gameBoard[r][c]; gameBoard=n; }
+
+        // --- LEADERBOARD ---
+        function renderLeaderboard() { const l=document.getElementById('leaderboard-list'); l.innerHTML=''; const db=JSON.parse(localStorage.getItem(DB_KEY))||{}; let u=Object.keys(db).map(k=>({n:k,p:db[k].points})); u.push({n:"EcoMaster",p:1500},{n:"GreenPro",p:1200}); u.sort((a,b)=>b.p-a.p); u.forEach((x,i)=>{ l.innerHTML+=`<div class="rank-card ${i<3?'rank-'+(i+1):''}"><div class="rank-num">${i+1}</div><div class="rank-name">${x.n}</div><div class="rank-score">🏆 ${x.p}</div></div>`; }); }
+    </script>
+</body>
+</html>

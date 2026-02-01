@@ -1,0 +1,130 @@
+:root {
+    --primary: #00695c;
+    --accent: #4db6ac;
+    --bg: #e0f2f1;
+    --card-bg: #ffffff;
+    --text: #004d40;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+body {
+    background: linear-gradient(135deg, #b2dfdb 0%, #80cbc4 100%);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+
+/* UTILS */
+.hidden { display: none !important; }
+.logo { font-family: 'Orbitron', sans-serif; color: var(--primary); }
+h1, h2, h3 { color: var(--text); }
+
+/* TOAST NOTIFICATION */
+.toast {
+    position: fixed; top: 20px; right: 20px;
+    background: var(--primary); color: white;
+    padding: 15px 25px; border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 1000; animation: slideIn 0.5s;
+}
+
+/* AUTH SECTION */
+#auth-section {
+    width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+}
+.auth-container {
+    background: rgba(255,255,255,0.9);
+    padding: 40px; width: 400px;
+    border-radius: 20px; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.auth-box input {
+    width: 100%; padding: 12px; margin: 10px 0;
+    border: 2px solid #ddd; border-radius: 8px;
+}
+.primary-btn {
+    width: 100%; padding: 12px;
+    background: var(--primary); color: white;
+    border: none; border-radius: 8px; cursor: pointer;
+    font-weight: bold; transition: 0.3s;
+}
+.primary-btn:hover { background: #004d40; transform: scale(1.02); }
+
+/* DASHBOARD LAYOUT */
+#dashboard-section {
+    display: flex; width: 100%; height: 100%;
+}
+.sidebar {
+    width: 250px; background: white; padding: 20px;
+    display: flex; flex-direction: column;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+}
+.user-profile { text-align: center; margin-bottom: 40px; }
+.avatar { font-size: 3rem; background: #e0f2f1; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; margin: 0 auto; }
+.nav-links li {
+    list-style: none; padding: 15px; cursor: pointer;
+    border-radius: 10px; margin-bottom: 5px; transition: 0.2s;
+}
+.nav-links li:hover { background: #b2dfdb; padding-left: 20px; }
+
+.content { flex: 1; padding: 30px; overflow-y: auto; }
+
+/* CARDS */
+.card {
+    background: white; padding: 25px; border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px;
+}
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+.stat-card { text-align: center; border-left: 5px solid var(--accent); }
+.stat-card h1 { font-size: 2.5rem; color: var(--primary); }
+
+/* AQI CIRCLE */
+.aqi-box { text-align: center; background: white; padding: 30px; border-radius: 20px; }
+.aqi-circle {
+    width: 150px; height: 150px; border-radius: 50%;
+    background: #ffccbc; color: #d84315;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    font-size: 3rem; font-weight: bold; margin: 20px auto;
+    border: 8px solid #ffab91;
+}
+
+/* GAME 2048 STYLES */
+.game-wrapper { display: flex; gap: 30px; justify-content: center; align-items: start; }
+.game-board {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    background: #bbada0; padding: 10px; border-radius: 10px;
+}
+.tile {
+    width: 80px; height: 80px; background: #cdc1b4;
+    border-radius: 5px; display: flex; justify-content: center; align-items: center;
+    font-size: 2rem; font-weight: bold; transition: all 0.1s;
+}
+/* Tile Colors */
+.t-2 { background: #eee4da; }
+.t-4 { background: #ede0c8; }
+.t-8 { background: #f2b179; color: white; }
+.t-16 { background: #f59563; color: white; }
+.t-32 { background: #f67c5f; color: white; }
+.t-64 { background: #f65e3b; color: white; box-shadow: 0 0 10px #f65e3b; }
+.t-128 { background: #edcf72; color: white; box-shadow: 0 0 15px #edcf72; font-size: 3rem;}
+
+/* QUIZ STYLES */
+.options-grid button {
+    width: 100%; margin: 5px 0; padding: 15px; text-align: left;
+    background: #f1f8e9; border: 1px solid #c5e1a5; border-radius: 8px; cursor: pointer;
+}
+.options-grid button:hover { background: #dcedc8; }
+
+/* LEADERBOARD */
+.rank-item {
+    display: flex; justify-content: space-between; padding: 15px;
+    background: white; margin-bottom: 10px; border-radius: 10px;
+    border-left: 5px solid #ddd;
+}
+.rank-1 { border-color: gold; background: #fffde7; }
+.rank-2 { border-color: silver; }
+.rank-3 { border-color: #cd7f32; }
+
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
