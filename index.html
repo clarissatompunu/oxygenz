@@ -7,41 +7,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- THEME CONFIG --- */
+        /* THEME & STYLES */
         :root {
-            --primary: #00b894;       
-            --primary-dark: #008f7a;
-            --accent: #55efc4;
-            
-            /* WARNA GRADASI BARU (Putih ke Mint) 🌿 */
+            --primary: #00b894; --primary-dark: #008f7a; --accent: #55efc4;
+            --text: #2d3436; --card-bg: rgba(255, 255, 255, 0.95);
             --bg-mint: linear-gradient(135deg, #ffffff 0%, #d1f2eb 100%);
-            
-            --text: #2d3436;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --shadow: 0 15px 35px rgba(0, 184, 148, 0.1);
-            
             --correct-bg: #d1fae5; --correct-border: #10b981; --correct-text: #065f46;
             --wrong-bg: #fee2e2; --wrong-border: #ef4444; --wrong-text: #991b1b;
         }
 
-        /* DEFAULT BODY (Mint Segar) */
         body {
-            background: var(--bg-mint); /* Default White to Mint */
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            color: var(--text);
-            transition: background 1s ease-in-out; /* Efek transisi halus */
+            background: var(--bg-mint);
+            height: 100vh; display: flex; overflow: hidden; color: var(--text);
+            transition: background 1s ease-in-out;
         }
 
-        /* DYNAMIC GAME BACKGROUNDS (Hanya Aktif saat Main Game) */
-        body.env-polluted { background: linear-gradient(135deg, #636e72 0%, #b2bec3 100%); } /* Abu-abu (Polusi) */
-        body.env-moderate { background: linear-gradient(135deg, #ff9f43 0%, #feca57 100%); } /* Oranye (Sore) */
-        body.env-clean { background: linear-gradient(135deg, #00b894 0%, #81ecec 100%); }   /* Biru (Bersih) */
+        body.env-polluted { background: linear-gradient(135deg, #636e72 0%, #b2bec3 100%); }
+        body.env-moderate { background: linear-gradient(135deg, #ff9f43 0%, #feca57 100%); }
+        body.env-clean { background: linear-gradient(135deg, #00b894 0%, #81ecec 100%); }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
-        
-        /* UTILS */
         .hidden { display: none !important; }
         button { cursor: pointer; transition: 0.2s; font-family: 'Nunito', sans-serif; }
         h1, h2, h3 { font-family: 'Fredoka', sans-serif; }
@@ -55,14 +40,13 @@
         .toast { position: fixed; top: 20px; right: 20px; background: var(--text); color: white; padding: 15px 25px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 2000; animation: slideIn 0.5s; font-weight: 800; display: flex; align-items: center; gap: 10px;}
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         
-        /* AUTH STYLE (Updated Text) */
+        /* AUTH SECTION */
         #auth-section { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
         .auth-container { background: rgba(255,255,255,0.9); padding: 40px; width: 450px; border-radius: 35px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.1); border: 5px solid #ffffff; backdrop-filter: blur(10px); }
         .logo-emoji { font-size: 4rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
         .logo-text { font-weight: 800; font-size: 3rem; color: var(--primary); margin-bottom: 5px; letter-spacing: -1px; }
         .auth-welcome { font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 5px; }
         .auth-sub { font-size: 0.95rem; color: #636e72; margin-bottom: 25px; font-weight: 600; line-height: 1.4; }
-        
         .auth-box input { width: 100%; padding: 15px; margin: 8px 0; border: 3px solid #edf2f7; border-radius: 15px; font-size: 1rem; transition: 0.3s; background: #f7fafc; color: var(--text); font-weight: 600; }
         .auth-box input:focus { border-color: var(--accent); outline: none; background: white; }
         .btn-group { display: flex; gap: 10px; margin-top: 25px; }
@@ -85,19 +69,18 @@
         header { margin-bottom: 35px; display: flex; align-items: center; gap: 15px; }
         header h1 { font-size: 2.5rem; color: var(--primary-dark); font-weight: 800; }
         
-        /* CARDS & GAME COMPONENTS */
+        /* CARDS */
         .card { background: var(--card-bg); padding: 35px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-bottom: 30px; border: 3px solid white; }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px; }
         .stat-card { text-align: center; padding: 30px 20px; background: linear-gradient(145deg, #ffffff, #f0f9f4); }
         .stat-emoji { font-size: 3rem; margin-bottom: 10px; display: block; }
         .stat-value { font-size: 3rem; color: var(--primary); font-weight: 900; }
-        
         .aqi-container { display: flex; gap: 40px; align-items: center; justify-content: center; padding: 10px; }
         .aqi-circle { width: 200px; height: 200px; border-radius: 50%; background: white; border: 12px solid #ffeaa7; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.1); position: relative; }
         .aqi-val { font-size: 4.5rem; color: #fab1a0; line-height: 1; font-weight: 900; }
         .aqi-emoji { font-size: 5rem; position: absolute; top: -20px; right: -20px; animation: float 3s infinite ease-in-out; }
 
-        /* GAME BOARD & POWERUPS */
+        /* GAME */
         .game-container { display: flex; gap: 40px; justify-content: center; align-items: start; }
         .game-sidebar { flex: 1; max-width: 300px; }
         .score-box { background: var(--primary); color: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 8px 0 var(--primary-dark); margin-bottom: 25px;}
@@ -105,9 +88,7 @@
         .game-board-container { background: rgba(255,255,255,0.5); padding: 15px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); border: 5px solid white; backdrop-filter: blur(5px); }
         .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .tile { width: 90px; height: 90px; background: rgba(238, 228, 218, 0.5); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 3.5rem; font-weight: 800; transition: all 0.15s ease-in-out; box-shadow: inset 0 3px 5px rgba(255,255,255,0.5), 0 3px 5px rgba(0,0,0,0.05); }
-        .t-2 { background: #eee4da; } .t-4 { background: #ede0c8; } .t-8 { background: #f2b179; color: white; } 
-        .t-16 { background: #f59563; color: white; } .t-32 { background: #f67c5f; color: white; } 
-        .t-64 { background: #f65e3b; color: white; } .t-128 { background: #edcf72; color: white; font-size: 4rem; animation: pulse 1.5s infinite; }
+        .t-2 { background: #eee4da; } .t-4 { background: #ede0c8; } .t-8 { background: #f2b179; color: white; } .t-16 { background: #f59563; color: white; } .t-32 { background: #f67c5f; color: white; } .t-64 { background: #f65e3b; color: white; } .t-128 { background: #edcf72; color: white; font-size: 4rem; animation: pulse 1.5s infinite; }
         .powerup-box { display: flex; gap: 10px; margin-top: 15px; }
         .p-btn { flex: 1; padding: 10px; border: none; border-radius: 12px; font-weight: 700; font-size: 0.8rem; background: white; color: var(--text); border: 2px solid #dfe6e9; transition: 0.2s; box-shadow: 0 3px 0 #b2bec3; }
         .p-btn:hover { transform: translateY(-2px); border-color: var(--primary); color: var(--primary); }
@@ -127,18 +108,56 @@
         .quiz-card-item:hover { transform: translateY(-5px); border-color: var(--primary); }
         .rank-card { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; transition: 0.3s; border: 3px solid transparent; }
         .rank-card:hover { transform: scale(1.02); }
-        .rank-1 { border-color: #ffd700; background: #fffde7; }
-        .rank-2 { border-color: #bdc3c7; background: #f5f6fa; }
-        .rank-3 { border-color: #d35400; background: #fbe9e7; }
+        .rank-1 { border-color: #ffd700; background: #fffde7; } .rank-2 { border-color: #bdc3c7; background: #f5f6fa; } .rank-3 { border-color: #d35400; background: #fbe9e7; }
         .rank-score { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
         
-        /* QUIZ */
-        .option-btn { background: white; padding: 18px 25px; border-radius: 15px; border: 3px solid #dfe6e9; text-align: left; font-size: 1.1rem; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 15px; width: 100%; margin-bottom: 10px;}
-        .option-btn:hover { background: #e3f2fd; border-color: #64b5f6; }
-        .option-btn.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); }
-        .option-btn.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong-text); }
-        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
-        .option-marker { width: 30px; height: 30px; background: #dfe6e9; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 800; color: #636e72; }
+        /* QUIZ BUTTONS - REVISI DESAIN */
+        .option-btn {
+            background: white;
+            padding: 18px 25px;
+            border-radius: 18px; /* Lebih rounded */
+            border: 3px solid #dfe6e9;
+            box-shadow: 0 5px 0 #b2bec3; /* EFEK 3D */
+            text-align: left;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800; /* Lebih tebal */
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .option-btn:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 8px 0 #b2bec3;
+        }
+        .option-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #b2bec3; /* Tekan ke bawah */
+        }
+        /* State Colors */
+        .option-btn.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); box-shadow: 0 5px 0 var(--correct-border); }
+        .option-btn.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong-text); box-shadow: 0 5px 0 var(--wrong-border); }
+        .option-btn.disabled { pointer-events: none; opacity: 0.9; } /* Opacity lebih tinggi biar jelas */
+        
+        .option-marker { width: 35px; height: 35px; background: #dfe6e9; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 800; color: #636e72; font-size: 1.1rem; }
+        .option-btn.correct .option-marker { background: var(--correct-border); color: white; }
+        .option-btn.wrong .option-marker { background: var(--wrong-border); color: white; }
+
+        /* Nav Buttons in Quiz */
+        .quiz-nav-btns { display: flex; justify-content: space-between; margin-top: 20px; }
+        .nav-btn { padding: 12px 25px; border-radius: 12px; font-weight: 800; border: none; font-size: 1rem; box-shadow: 0 4px 0 rgba(0,0,0,0.1); cursor:pointer; }
+        .btn-prev { background: #b0bec5; color: white; box-shadow: 0 4px 0 #7f8c8d; }
+        .btn-next { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-submit { background: #ff7675; color: white; width: 100%; margin-top: 20px; padding: 15px; border-radius: 15px; font-size: 1.2rem; font-weight: 800; box-shadow: 0 5px 0 #d63031; border: none; cursor:pointer;}
+        .btn-submit:hover, .btn-next:hover { transform: translateY(-2px); }
+        .btn-submit:active, .btn-next:active { transform: translateY(2px); box-shadow:none; }
     </style>
 </head>
 <body>
@@ -161,7 +180,6 @@
             <h1 class="logo-text">OxyGenZ</h1>
             <p class="auth-welcome">Welcome back, Eco-Warrior! 👋</p>
             <p class="auth-sub">Register yourself to play with us,<br>or Log In to continue saving the planet!</p>
-            
             <div class="auth-box">
                 <input type="text" id="auth-user" placeholder="Username (Unique ID)">
                 <input type="password" id="auth-pass" placeholder="Password">
@@ -278,6 +296,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // 🔥 CONFIG ASLI KAMU (SUDAH AKU ISI) 🔥
         const firebaseConfig = {
             apiKey: "AIzaSyDMCkwQoeHzXjM-90fKPI5YGG9tajL95Ks",
             authDomain: "oxygenz-web.firebaseapp.com",
@@ -296,7 +315,6 @@
         let userData = {};
         const CACHE_KEY = "oxygenz_user_session"; 
 
-        // DATA
         const FACTS = { 4: {title: "Car Pollution", icon: "🚗", text: "Did you know? Cars create a gas called CO2. It works like a thick blanket that warms up the Earth! 🌍"}, 8: {title: "Factory Smoke", icon: "🏭", text: "Factories make things we use, but they release lots of smoke. Filters can help catch the dirt before it flies away! 🏭"}, 16: {title: "Heavy Haze", icon: "😶‍🌫️", text: "Uh oh! Haze is like a dirty cloud on the ground. When it's hazy, wearing a mask helps you breathe safely! 😷"}, 32: {title: "Ozone Danger", icon: "⚡", text: "Zap! Ground-level Ozone is bad for your lungs. It forms when sunlight cooks car fumes on hot days! ☀️"}, 64: {title: "Lungs at Risk", icon: "🫁", text: "Your lungs are like pink sponges! Breathing dirty air makes them work too hard. Clean air keeps them happy! 💖"}, 128: {title: "Plant Power!", icon: "🌱", text: "Victory! Trees are superheroes. They eat the bad CO2 and give us fresh Oxygen. You saved the day! 🎉"} };
         const QUIZ_PACKAGES = [ { id: 1, title: "Indoor Air Quality", icon: "🏠", questions: [{q: "What is a common source of indoor pollution?", options: ["LED bulbs", "Cooking fumes", "Open windows", "Plants"], ans: 1}, {q: "Which toxic gas is odorless?", options: ["Carbon Monoxide", "Sulfur Dioxide", "Oxygen", "Helium"], ans: 0}, {q: "What does a HEPA filter do?", options: ["Heats air", "Traps particles", "Adds scent", "Measures temp"], ans: 1}, {q: "High humidity leads to?", options: ["Dust", "Mold", "Ozone", "Carbon"], ans: 1}, {q: "What are VOCs?", options: ["Vitamins", "Gases from paints", "Bacteria", "Solar energy"], ans: 1}] }, { id: 2, title: "Sustainable Living", icon: "🌱", questions: [{q: "Most effective '3 Rs'?", options: ["Recycle", "Reuse", "Reduce", "Repaint"], ans: 2}, {q: "Most efficient lightbulb?", options: ["Incandescent", "Halogen", "LED", "Fluorescent"], ans: 2}, {q: "What is Composting?", options: ["Burning trash", "Organic waste to soil", "Throwing plastic", "Compressing cans"], ans: 1}, {q: "Diet with lowest carbon footprint?", options: ["Plant-based", "Red meat", "Processed food", "Imported food"], ans: 0}, {q: "'Vampire Power' refers to?", options: ["Solar at night", "Electronics off but plugged", "Batteries leaking", "Bats"], ans: 1}] }, { id: 3, title: "Pollution & Health", icon: "🫁", questions: [{q: "Why is PM2.5 dangerous?", options: ["Radioactive", "Sharp", "Enters bloodstream", "Smells bad"], ans: 2}, {q: "Long-term pollution links to?", options: ["Better immune", "Respiratory disease", "Height", "Vision"], ans: 1}, {q: "Most vulnerable group?", options: ["Teenagers", "Children & Elderly", "Office workers", "Athletes"], ans: 1}, {q: "What is Smog?", options: ["Cloud", "Smoke + Fog", "Rock", "Rainstorm"], ans: 1}, {q: "Noise pollution causes?", options: ["Clean air", "Stress & Hearing loss", "Sleep", "Warming"], ans: 1}] }, { id: 4, title: "Energy & Resources", icon: "⚡", questions: [{q: "Which is renewable?", options: ["Coal", "Gas", "Wind Energy", "Nuclear"], ans: 2}, {q: "Disadvantage of fossil fuels?", options: ["Expensive", "Greenhouse gases", "Hard to find", "Renewable"], ans: 1}, {q: "Geothermal energy comes from?", options: ["Sun", "Wind", "Heat inside Earth", "Tides"], ans: 2}, {q: "Benefit of EVs?", options: ["Quieter", "Zero tailpipe emissions", "Faster", "No energy"], ans: 1}, {q: "Solar panels convert?", options: ["Light back to space", "Sunlight to electricity", "Heat roof", "Grow plants"], ans: 1}] } ];
         const CHALLENGES = [{id: 1, title: "Open Windows", desc: "Ventilate 10 mins", pts: 50, icon: "🪟"}, {id: 2, title: "Add Plant", desc: "Snake Plant", pts: 100, icon: "🪴"}, {id: 3, title: "Clean Dust", desc: "Wipe surfaces", pts: 75, icon: "🧹"}];
@@ -331,7 +349,6 @@
             showLoading(false);
         }
         window.handleLogout = () => { localStorage.removeItem(CACHE_KEY); location.reload(); }
-        
         window.onload = async () => {
             const cachedUser = localStorage.getItem(CACHE_KEY);
             if(cachedUser) {
