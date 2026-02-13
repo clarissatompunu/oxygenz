@@ -7,19 +7,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* THEME & STYLES */
+        /* --- THEME CONFIG --- */
         :root {
-            --primary: #00b894; --primary-dark: #008f7a; --accent: #55efc4;
-            --text: #2d3436; --card-bg: rgba(255, 255, 255, 0.95);
+            --primary: #00b894;       
+            --primary-dark: #008f7a;
+            --accent: #55efc4;
+            
+            /* WARNA GRADASI BARU (Putih ke Mint) 🌿 */
+            --bg-mint: linear-gradient(135deg, #ffffff 0%, #d1f2eb 100%);
+            
+            --text: #2d3436;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 15px 35px rgba(0, 184, 148, 0.1);
+            
             --correct-bg: #d1fae5; --correct-border: #10b981; --correct-text: #065f46;
             --wrong-bg: #fee2e2; --wrong-border: #ef4444; --wrong-text: #991b1b;
         }
-        body.env-polluted { background: linear-gradient(135deg, #636e72 0%, #b2bec3 100%); }
-        body.env-moderate { background: linear-gradient(135deg, #ff9f43 0%, #feca57 100%); }
-        body.env-clean { background: linear-gradient(135deg, #00b894 0%, #81ecec 100%); }
-        
+
+        /* DEFAULT BODY (Mint Segar) */
+        body {
+            background: var(--bg-mint); /* Default White to Mint */
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            color: var(--text);
+            transition: background 1s ease-in-out; /* Efek transisi halus */
+        }
+
+        /* DYNAMIC GAME BACKGROUNDS (Hanya Aktif saat Main Game) */
+        body.env-polluted { background: linear-gradient(135deg, #636e72 0%, #b2bec3 100%); } /* Abu-abu (Polusi) */
+        body.env-moderate { background: linear-gradient(135deg, #ff9f43 0%, #feca57 100%); } /* Oranye (Sore) */
+        body.env-clean { background: linear-gradient(135deg, #00b894 0%, #81ecec 100%); }   /* Biru (Bersih) */
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
-        body { height: 100vh; display: flex; overflow: hidden; color: var(--text); transition: background 1s ease; }
+        
+        /* UTILS */
         .hidden { display: none !important; }
         button { cursor: pointer; transition: 0.2s; font-family: 'Nunito', sans-serif; }
         h1, h2, h3 { font-family: 'Fredoka', sans-serif; }
@@ -29,22 +51,25 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* UI ELEMENTS */
+        /* TOAST */
         .toast { position: fixed; top: 20px; right: 20px; background: var(--text); color: white; padding: 15px 25px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 2000; animation: slideIn 0.5s; font-weight: 800; display: flex; align-items: center; gap: 10px;}
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         
-        /* AUTH SECTION */
+        /* AUTH STYLE (Updated Text) */
         #auth-section { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-        .auth-container { background: rgba(255,255,255,0.9); padding: 50px 40px; width: 450px; border-radius: 35px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.1); border: 5px solid #ffffff; backdrop-filter: blur(10px); }
-        .logo-emoji { font-size: 5rem; display: block; margin-bottom: -10px; animation: bounce 2s infinite; }
-        .logo-text { font-weight: 800; font-size: 3.5rem; color: var(--primary); margin-bottom: 30px; letter-spacing: -1px; }
-        .auth-box input { width: 100%; padding: 18px; margin: 8px 0; border: 3px solid #edf2f7; border-radius: 18px; font-size: 1.1rem; transition: 0.3s; background: #f7fafc; color: var(--text); font-weight: 600; }
+        .auth-container { background: rgba(255,255,255,0.9); padding: 40px; width: 450px; border-radius: 35px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.1); border: 5px solid #ffffff; backdrop-filter: blur(10px); }
+        .logo-emoji { font-size: 4rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
+        .logo-text { font-weight: 800; font-size: 3rem; color: var(--primary); margin-bottom: 5px; letter-spacing: -1px; }
+        .auth-welcome { font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 5px; }
+        .auth-sub { font-size: 0.95rem; color: #636e72; margin-bottom: 25px; font-weight: 600; line-height: 1.4; }
+        
+        .auth-box input { width: 100%; padding: 15px; margin: 8px 0; border: 3px solid #edf2f7; border-radius: 15px; font-size: 1rem; transition: 0.3s; background: #f7fafc; color: var(--text); font-weight: 600; }
         .auth-box input:focus { border-color: var(--accent); outline: none; background: white; }
-        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
-        .btn-auth { flex: 1; padding: 15px; border: none; border-radius: 18px; font-weight: 800; font-size: 1.1rem; }
-        .btn-login { background: var(--primary); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-        .btn-login:active { transform: translateY(3px); box-shadow: 0 0 0 var(--primary-dark); }
-        .btn-register { background: white; color: var(--primary); border: 3px solid var(--primary); box-shadow: 0 6px 0 #dfe6e9; }
+        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
+        .btn-auth { flex: 1; padding: 12px; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem; }
+        .btn-login { background: var(--primary); color: white; box-shadow: 0 5px 0 var(--primary-dark); }
+        .btn-login:active { transform: translateY(3px); box-shadow: none; }
+        .btn-register { background: white; color: var(--primary); border: 3px solid var(--primary); box-shadow: 0 5px 0 #dfe6e9; }
         .btn-register:active { transform: translateY(3px); box-shadow: none; }
 
         /* DASHBOARD LAYOUT */
@@ -97,7 +122,7 @@
         @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        /* QUIZ & LEADERBOARD REUSABLES */
+        /* REUSABLES */
         .quiz-card-item { background: white; padding: 25px; border-radius: 20px; border: 3px solid #e0f2f1; text-align: center; transition: 0.3s; cursor: pointer; }
         .quiz-card-item:hover { transform: translateY(-5px); border-color: var(--primary); }
         .rank-card { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; transition: 0.3s; border: 3px solid transparent; }
@@ -107,7 +132,7 @@
         .rank-3 { border-color: #d35400; background: #fbe9e7; }
         .rank-score { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
         
-        /* QUIZ SPECIFIC */
+        /* QUIZ */
         .option-btn { background: white; padding: 18px 25px; border-radius: 15px; border: 3px solid #dfe6e9; text-align: left; font-size: 1.1rem; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 15px; width: 100%; margin-bottom: 10px;}
         .option-btn:hover { background: #e3f2fd; border-color: #64b5f6; }
         .option-btn.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); }
@@ -116,7 +141,7 @@
         .option-marker { width: 30px; height: 30px; background: #dfe6e9; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 800; color: #636e72; }
     </style>
 </head>
-<body class="env-polluted">
+<body>
     <div id="loading-overlay" class="hidden"><div class="spinner"></div></div>
     <div id="toast" class="toast hidden"><span>🔔</span> <span id="toast-msg">Notification</span></div>
     <div id="baloon-container"></div>
@@ -134,12 +159,15 @@
         <div class="auth-container">
             <span class="logo-emoji">🌱</span>
             <h1 class="logo-text">OxyGenZ</h1>
+            <p class="auth-welcome">Welcome back, Eco-Warrior! 👋</p>
+            <p class="auth-sub">Register yourself to play with us,<br>or Log In to continue saving the planet!</p>
+            
             <div class="auth-box">
                 <input type="text" id="auth-user" placeholder="Username (Unique ID)">
                 <input type="password" id="auth-pass" placeholder="Password">
                 <div class="btn-group">
-                    <button class="btn-auth btn-login" onclick="handleLogin()">Log In 🚀</button>
-                    <button class="btn-auth btn-register" onclick="handleRegister()">Register ✨</button>
+                    <button class="btn-auth btn-login" onclick="handleLogin()">Log In</button>
+                    <button class="btn-auth btn-register" onclick="handleRegister()">Register</button>
                 </div>
             </div>
         </div>
@@ -250,59 +278,39 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 🔥 CONFIG SUDAH DIMASUKKAN DI SINI (JANGAN DIUBAH LAGI) 🔥
+        // 🔥 PASTE CONFIG FIREBASE KAMU DI SINI (GANTI LAGI YA) 🔥
         const firebaseConfig = {
-            apiKey: "AIzaSyDMCkwQoeHzXjM-90fKPI5YGG9tajL95Ks",
-            authDomain: "oxygenz-web.firebaseapp.com",
-            projectId: "oxygenz-web",
-            storageBucket: "oxygenz-web.firebasestorage.app",
-            messagingSenderId: "243500806993",
-            appId: "1:243500806993:web:087ac3845f4d8fee825970",
-            measurementId: "G-ZDNCV0HX03"
+            apiKey: "GANTI_INI",
+            authDomain: "GANTI_INI",
+            projectId: "GANTI_INI",
+            storageBucket: "GANTI_INI",
+            messagingSenderId: "GANTI_INI",
+            appId: "GANTI_INI"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         // GLOBALS
         let currentUser = null;
         let userData = {};
-        const CACHE_KEY = "oxygenz_user_session"; // To keep logged in
+        const CACHE_KEY = "oxygenz_user_session"; 
 
-        // GAME & CONTENT DATA
-        const FACTS = {
-            4: {title: "Car Pollution", icon: "🚗", text: "Did you know? Cars create a gas called CO2. It works like a thick blanket that warms up the Earth! 🌍"},
-            8: {title: "Factory Smoke", icon: "🏭", text: "Factories make things we use, but they release lots of smoke. Filters can help catch the dirt before it flies away! 🏭"},
-            16: {title: "Heavy Haze", icon: "😶‍🌫️", text: "Uh oh! Haze is like a dirty cloud on the ground. When it's hazy, wearing a mask helps you breathe safely! 😷"},
-            32: {title: "Ozone Danger", icon: "⚡", text: "Zap! Ground-level Ozone is bad for your lungs. It forms when sunlight cooks car fumes on hot days! ☀️"},
-            64: {title: "Lungs at Risk", icon: "🫁", text: "Your lungs are like pink sponges! Breathing dirty air makes them work too hard. Clean air keeps them happy! 💖"},
-            128: {title: "Plant Power!", icon: "🌱", text: "Victory! Trees are superheroes. They eat the bad CO2 and give us fresh Oxygen. You saved the day! 🎉"}
-        };
-        const QUIZ_PACKAGES = [
-            { id: 1, title: "Indoor Air Quality", icon: "🏠", questions: [{q: "What is a common source of indoor pollution?", options: ["LED bulbs", "Cooking fumes", "Open windows", "Plants"], ans: 1}, {q: "Which toxic gas is odorless?", options: ["Carbon Monoxide", "Sulfur Dioxide", "Oxygen", "Helium"], ans: 0}, {q: "What does a HEPA filter do?", options: ["Heats air", "Traps particles", "Adds scent", "Measures temp"], ans: 1}, {q: "High humidity leads to?", options: ["Dust", "Mold", "Ozone", "Carbon"], ans: 1}, {q: "What are VOCs?", options: ["Vitamins", "Gases from paints", "Bacteria", "Solar energy"], ans: 1}] },
-            { id: 2, title: "Sustainable Living", icon: "🌱", questions: [{q: "Most effective '3 Rs'?", options: ["Recycle", "Reuse", "Reduce", "Repaint"], ans: 2}, {q: "Most efficient lightbulb?", options: ["Incandescent", "Halogen", "LED", "Fluorescent"], ans: 2}, {q: "What is Composting?", options: ["Burning trash", "Organic waste to soil", "Throwing plastic", "Compressing cans"], ans: 1}, {q: "Diet with lowest carbon footprint?", options: ["Plant-based", "Red meat", "Processed food", "Imported food"], ans: 0}, {q: "'Vampire Power' refers to?", options: ["Solar at night", "Electronics off but plugged", "Batteries leaking", "Bats"], ans: 1}] },
-            { id: 3, title: "Pollution & Health", icon: "🫁", questions: [{q: "Why is PM2.5 dangerous?", options: ["Radioactive", "Sharp", "Enters bloodstream", "Smells bad"], ans: 2}, {q: "Long-term pollution links to?", options: ["Better immune", "Respiratory disease", "Height", "Vision"], ans: 1}, {q: "Most vulnerable group?", options: ["Teenagers", "Children & Elderly", "Office workers", "Athletes"], ans: 1}, {q: "What is Smog?", options: ["Cloud", "Smoke + Fog", "Rock", "Rainstorm"], ans: 1}, {q: "Noise pollution causes?", options: ["Clean air", "Stress & Hearing loss", "Sleep", "Warming"], ans: 1}] },
-            { id: 4, title: "Energy & Resources", icon: "⚡", questions: [{q: "Which is renewable?", options: ["Coal", "Gas", "Wind Energy", "Nuclear"], ans: 2}, {q: "Disadvantage of fossil fuels?", options: ["Expensive", "Greenhouse gases", "Hard to find", "Renewable"], ans: 1}, {q: "Geothermal energy comes from?", options: ["Sun", "Wind", "Heat inside Earth", "Tides"], ans: 2}, {q: "Benefit of EVs?", options: ["Quieter", "Zero tailpipe emissions", "Faster", "No energy"], ans: 1}, {q: "Solar panels convert?", options: ["Light back to space", "Sunlight to electricity", "Heat roof", "Grow plants"], ans: 1}] }
-        ];
+        const FACTS = { 4: {title: "Car Pollution", icon: "🚗", text: "Did you know? Cars create a gas called CO2. It works like a thick blanket that warms up the Earth! 🌍"}, 8: {title: "Factory Smoke", icon: "🏭", text: "Factories make things we use, but they release lots of smoke. Filters can help catch the dirt before it flies away! 🏭"}, 16: {title: "Heavy Haze", icon: "😶‍🌫️", text: "Uh oh! Haze is like a dirty cloud on the ground. When it's hazy, wearing a mask helps you breathe safely! 😷"}, 32: {title: "Ozone Danger", icon: "⚡", text: "Zap! Ground-level Ozone is bad for your lungs. It forms when sunlight cooks car fumes on hot days! ☀️"}, 64: {title: "Lungs at Risk", icon: "🫁", text: "Your lungs are like pink sponges! Breathing dirty air makes them work too hard. Clean air keeps them happy! 💖"}, 128: {title: "Plant Power!", icon: "🌱", text: "Victory! Trees are superheroes. They eat the bad CO2 and give us fresh Oxygen. You saved the day! 🎉"} };
+        const QUIZ_PACKAGES = [ { id: 1, title: "Indoor Air Quality", icon: "🏠", questions: [{q: "What is a common source of indoor pollution?", options: ["LED bulbs", "Cooking fumes", "Open windows", "Plants"], ans: 1}, {q: "Which toxic gas is odorless?", options: ["Carbon Monoxide", "Sulfur Dioxide", "Oxygen", "Helium"], ans: 0}, {q: "What does a HEPA filter do?", options: ["Heats air", "Traps particles", "Adds scent", "Measures temp"], ans: 1}, {q: "High humidity leads to?", options: ["Dust", "Mold", "Ozone", "Carbon"], ans: 1}, {q: "What are VOCs?", options: ["Vitamins", "Gases from paints", "Bacteria", "Solar energy"], ans: 1}] }, { id: 2, title: "Sustainable Living", icon: "🌱", questions: [{q: "Most effective '3 Rs'?", options: ["Recycle", "Reuse", "Reduce", "Repaint"], ans: 2}, {q: "Most efficient lightbulb?", options: ["Incandescent", "Halogen", "LED", "Fluorescent"], ans: 2}, {q: "What is Composting?", options: ["Burning trash", "Organic waste to soil", "Throwing plastic", "Compressing cans"], ans: 1}, {q: "Diet with lowest carbon footprint?", options: ["Plant-based", "Red meat", "Processed food", "Imported food"], ans: 0}, {q: "'Vampire Power' refers to?", options: ["Solar at night", "Electronics off but plugged", "Batteries leaking", "Bats"], ans: 1}] }, { id: 3, title: "Pollution & Health", icon: "🫁", questions: [{q: "Why is PM2.5 dangerous?", options: ["Radioactive", "Sharp", "Enters bloodstream", "Smells bad"], ans: 2}, {q: "Long-term pollution links to?", options: ["Better immune", "Respiratory disease", "Height", "Vision"], ans: 1}, {q: "Most vulnerable group?", options: ["Teenagers", "Children & Elderly", "Office workers", "Athletes"], ans: 1}, {q: "What is Smog?", options: ["Cloud", "Smoke + Fog", "Rock", "Rainstorm"], ans: 1}, {q: "Noise pollution causes?", options: ["Clean air", "Stress & Hearing loss", "Sleep", "Warming"], ans: 1}] }, { id: 4, title: "Energy & Resources", icon: "⚡", questions: [{q: "Which is renewable?", options: ["Coal", "Gas", "Wind Energy", "Nuclear"], ans: 2}, {q: "Disadvantage of fossil fuels?", options: ["Expensive", "Greenhouse gases", "Hard to find", "Renewable"], ans: 1}, {q: "Geothermal energy comes from?", options: ["Sun", "Wind", "Heat inside Earth", "Tides"], ans: 2}, {q: "Benefit of EVs?", options: ["Quieter", "Zero tailpipe emissions", "Faster", "No energy"], ans: 1}, {q: "Solar panels convert?", options: ["Light back to space", "Sunlight to electricity", "Heat roof", "Grow plants"], ans: 1}] } ];
         const CHALLENGES = [{id: 1, title: "Open Windows", desc: "Ventilate 10 mins", pts: 50, icon: "🪟"}, {id: 2, title: "Add Plant", desc: "Snake Plant", pts: 100, icon: "🪴"}, {id: 3, title: "Clean Dust", desc: "Wipe surfaces", pts: 75, icon: "🧹"}];
 
-        // --- AUTH LOGIC (DATABASE) ---
+        // --- AUTH ---
         window.handleRegister = async () => {
             const u = document.getElementById('auth-user').value.trim(); const p = document.getElementById('auth-pass').value.trim();
             if(!u || !p) return showToast("Please fill all fields!");
-            
             showLoading(true);
             try {
-                const docRef = doc(db, "users", u);
-                const docSnap = await getDoc(docRef);
+                const docRef = doc(db, "users", u); const docSnap = await getDoc(docRef);
                 if(docSnap.exists()) { showToast("Username taken!"); showLoading(false); return; }
-                
                 const newData = { pass: p, points: 0, tokens: 5, cleaned: 0, completedChallenges: [], completedQuizzes: [], unlockedTiles: [] };
                 await setDoc(docRef, newData);
-                
-                localStorage.setItem(CACHE_KEY, u); // Cache login
-                currentUser = u; userData = newData;
+                localStorage.setItem(CACHE_KEY, u); currentUser = u; userData = newData;
                 showDashboard(); showToast("Welcome to OxyGenZ! 🌿");
             } catch(e) { console.error(e); showToast("Error connecting to DB"); }
             showLoading(false);
@@ -311,79 +319,51 @@
         window.handleLogin = async () => {
             const u = document.getElementById('auth-user').value.trim(); const p = document.getElementById('auth-pass').value.trim();
             if(!u || !p) return showToast("Please fill all fields!");
-            
             showLoading(true);
             try {
-                const docRef = doc(db, "users", u);
-                const docSnap = await getDoc(docRef);
-                
+                const docRef = doc(db, "users", u); const docSnap = await getDoc(docRef);
                 if(docSnap.exists() && docSnap.data().pass === p) {
-                    localStorage.setItem(CACHE_KEY, u); // Cache login
-                    currentUser = u; userData = docSnap.data();
+                    localStorage.setItem(CACHE_KEY, u); currentUser = u; userData = docSnap.data();
                     showDashboard(); showToast(`Welcome back, ${u}! 👋`);
-                } else {
-                    showToast("Invalid Username or Password ❌");
-                }
+                } else { showToast("Invalid Username or Password ❌"); }
             } catch(e) { console.error(e); showToast("Login Error"); }
             showLoading(false);
         }
-
         window.handleLogout = () => { localStorage.removeItem(CACHE_KEY); location.reload(); }
-
-        // AUTO LOGIN (CACHE CHECK)
         window.onload = async () => {
             const cachedUser = localStorage.getItem(CACHE_KEY);
             if(cachedUser) {
                 showLoading(true);
                 try {
-                    const docRef = doc(db, "users", cachedUser);
-                    const docSnap = await getDoc(docRef);
-                    if(docSnap.exists()) {
-                        currentUser = cachedUser; userData = docSnap.data();
-                        showDashboard();
-                    } else {
-                        document.getElementById('auth-section').classList.remove('hidden');
-                    }
+                    const docRef = doc(db, "users", cachedUser); const docSnap = await getDoc(docRef);
+                    if(docSnap.exists()) { currentUser = cachedUser; userData = docSnap.data(); showDashboard(); } 
+                    else { document.getElementById('auth-section').classList.remove('hidden'); }
                 } catch(e) { document.getElementById('auth-section').classList.remove('hidden'); }
                 showLoading(false);
             }
         };
 
-        // SYNC DATA TO DB
-        async function saveToDB() {
-            if(!currentUser) return;
-            try { await updateDoc(doc(db, "users", currentUser), userData); } catch(e){ console.log("Save error", e); }
-            updateUI();
-        }
+        async function saveToDB() { if(!currentUser)return; try{ await updateDoc(doc(db, "users", currentUser), userData); }catch(e){} updateUI(); }
 
-        // --- DASHBOARD UI ---
+        // --- UI & LOGIC ---
         function updateUI() {
             document.getElementById('display-username').innerText = currentUser;
-            document.getElementById('stat-points').innerText = userData.points;
-            document.getElementById('stat-tokens').innerText = userData.tokens;
-            document.getElementById('stat-cleaned').innerText = userData.cleaned;
-            
-            let aqi = 150 - userData.cleaned; if(aqi<50) aqi=50;
-            document.getElementById('aqi-val').innerText = aqi;
+            document.getElementById('stat-points').innerText = userData.points; document.getElementById('stat-tokens').innerText = userData.tokens; document.getElementById('stat-cleaned').innerText = userData.cleaned;
+            let aqi = 150 - userData.cleaned; if(aqi<50) aqi=50; document.getElementById('aqi-val').innerText = aqi;
             const stat = document.getElementById('aqi-status'); const circ = document.querySelector('.aqi-circle'); const em = document.getElementById('aqi-emoji');
             if(aqi>100){ stat.innerText="UNHEALTHY"; stat.style.color="#fab1a0"; circ.style.borderColor="#fab1a0"; em.innerText="🌫️"; }
             else if(aqi>70){ stat.innerText="MODERATE"; stat.style.color="#ffeaa7"; circ.style.borderColor="#ffeaa7"; em.innerText="😐"; }
             else{ stat.innerText="EXCELLENT"; stat.style.color="#55efc4"; circ.style.borderColor="#55efc4"; em.innerText="✨"; }
-
-            // Challenges
+            
             const cCont = document.getElementById('challenges-container'); cCont.innerHTML='';
             CHALLENGES.forEach(c => {
                 const done = userData.completedChallenges.includes(c.id);
                 const btn = done ? '<button disabled style="background:#b2bec3;color:white;border:none;padding:8px 15px;border-radius:10px;">Done</button>' : `<button onclick="doChallenge(${c.id},${c.pts})" style="background:var(--accent);border:none;padding:8px 15px;border-radius:10px;font-weight:800;color:var(--primary-dark);">Complete</button>`;
                 cCont.innerHTML += `<div class="rank-card" style="padding:15px;"><div><span style="font-size:1.5rem;margin-right:10px;">${c.icon}</span><b>${c.title}</b></div>${btn}</div>`;
             });
-
-            // Quizzes
-            const qMenu = document.getElementById('quiz-menu'); qMenu.innerHTML = '';
-            let completedCount = 0;
+            const qMenu = document.getElementById('quiz-menu'); qMenu.innerHTML = ''; let completedCount = 0;
             QUIZ_PACKAGES.forEach(pkg => {
-                const isDone = userData.completedQuizzes && userData.completedQuizzes.includes(pkg.id);
-                if(isDone) completedCount++;
+                const isDone = userData.completedQuizzes && userData.completedQuizzes.includes(pkg.id); if(isDone) completedCount++;
                 const statusHtml = isDone ? '<span style="color:var(--primary); font-weight:800;">✅ Completed</span>' : '<span class="quiz-reward">🏆 +50 Pts</span>';
                 const clickAction = isDone ? `showToast("You already finished this quiz!")` : `initQuiz(${pkg.id})`;
                 const opacity = isDone ? 'opacity: 0.6;' : '';
@@ -392,77 +372,54 @@
             document.getElementById('quizzes-completed').innerText = completedCount;
         }
 
-        // --- LEADERBOARD (REAL DATABASE FETCH) ---
         window.showPage = async (pid) => {
             document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden')); document.getElementById(`page-${pid}`).classList.remove('hidden');
             document.querySelectorAll('.nav-links li').forEach(e=>e.classList.remove('active-nav')); document.getElementById(`nav-${pid}`).classList.add('active-nav');
             
-            if(pid==='game'){ window.addEventListener('keydown', handleGameKey); if(gameBoard.every(r=>r.every(v=>v===0))) initGame(); } 
-            else window.removeEventListener('keydown', handleGameKey);
-            
+            // BACKGROUND LOGIC
+            const body = document.body;
+            if(pid === 'game') {
+                window.addEventListener('keydown', handleGameKey); 
+                if(gameBoard.every(r=>r.every(v=>v===0))) initGame();
+                // Let game control background
+                let max = 0; gameBoard.forEach(r=>r.forEach(v=>{if(v>max)max=v;})); updateEnvironment(max);
+            } else {
+                window.removeEventListener('keydown', handleGameKey);
+                // RESET BACKGROUND TO MINT FOR OTHER TABS
+                body.classList.remove('env-polluted', 'env-moderate', 'env-clean');
+            }
+
             if(pid==='leaderboard') {
                 showLoading(true);
                 const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
                 try {
-                    // Fetch top 10 users by points
                     const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
-                    const querySnapshot = await getDocs(q);
-                    let rank = 1;
+                    const querySnapshot = await getDocs(q); let rank = 1;
                     querySnapshot.forEach((doc) => {
-                        const u = doc.data();
-                        const name = doc.id;
-                        let rankClass = rank < 4 ? `rank-${rank}` : '';
-                        let medal = rank===1 ? '🥇' : rank===2 ? '🥈' : rank===3 ? '🥉' : `#${rank}`;
-                        list.innerHTML += `<div class="rank-card ${rankClass}"><div class="rank-num">${medal}</div><div class="rank-name">${name}</div><div class="rank-score">🏆 ${u.points}</div></div>`;
-                        rank++;
+                        const u = doc.data(); const name = doc.id;
+                        let rankClass = rank < 4 ? `rank-${rank}` : ''; let medal = rank===1 ? '🥇' : rank===2 ? '🥈' : rank===3 ? '🥉' : `#${rank}`;
+                        list.innerHTML += `<div class="rank-card ${rankClass}"><div class="rank-num">${medal}</div><div class="rank-name">${name}</div><div class="rank-score">🏆 ${u.points}</div></div>`; rank++;
                     });
-                } catch(e) { console.error(e); list.innerHTML = "<p>Error loading leaderboard.</p>"; }
+                } catch(e) { list.innerHTML = "<p>Error loading leaderboard.</p>"; }
                 showLoading(false);
             }
         }
 
-        // --- EXPORT FUNCTIONS TO WINDOW (SO HTML CAN SEE THEM) ---
-        window.doChallenge = async (id, pts) => { 
-            userData.completedChallenges.push(id); userData.points+=pts; userData.cleaned+=20; userData.tokens+=3;
-            await saveToDB(); showToast(`+${pts} Pts!`); triggerBalloons(); 
-        }
+        window.doChallenge = async (id, pts) => { userData.completedChallenges.push(id); userData.points+=pts; userData.cleaned+=20; userData.tokens+=3; await saveToDB(); showToast(`+${pts} Pts!`); triggerBalloons(); }
         
-        // --- GAME LOGIC ---
         let gameBoard=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; let gameScore=0; let prevBoard=null; let prevScore=0;
         window.initGame = () => { gameBoard=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; gameScore=0; prevBoard=null; addTile(); addTile(); drawBoard(); updateEnvironment(0); }
-        function drawBoard(){ 
-            const d=document.getElementById('game-board'); d.innerHTML=''; let maxVal=0;
-            gameBoard.forEach(r=>r.forEach(v=>{ if(v>maxVal)maxVal=v; const t=document.createElement('div'); t.className=`tile t-${v}`; t.innerText=v>0?getIcon(v):''; d.appendChild(t); })); 
-            document.getElementById('game-score').innerText=gameScore; updateEnvironment(maxVal);
-        }
+        function drawBoard(){ const d=document.getElementById('game-board'); d.innerHTML=''; let maxVal=0; gameBoard.forEach(r=>r.forEach(v=>{ if(v>maxVal)maxVal=v; const t=document.createElement('div'); t.className=`tile t-${v}`; t.innerText=v>0?getIcon(v):''; d.appendChild(t); })); document.getElementById('game-score').innerText=gameScore; updateEnvironment(maxVal); }
         function getIcon(v){ const i={2:'🌫️',4:'🚗',8:'🏭',16:'😶‍🌫️',32:'⚡',64:'🫁',128:'🌱'}; return i[v]||v; }
         function addTile(){ let e=[]; for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(gameBoard[r][c]===0)e.push({r,c}); if(e.length){ const s=e[Math.floor(Math.random()*e.length)]; gameBoard[s.r][s.c]=2; } }
         window.handleGameKey = (e) => { if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){ e.preventDefault(); prevBoard=JSON.parse(JSON.stringify(gameBoard)); prevScore=gameScore; let m=false; if(e.key==='ArrowUp')m=move(0); if(e.key==='ArrowRight')m=move(1); if(e.key==='ArrowDown')m=move(2); if(e.key==='ArrowLeft')m=move(3); if(m){ addTile(); drawBoard(); checkNewDiscovery(); if(gameBoard.some(r=>r.some(v=>v>=128))) { showModal("🌱 Victory!", "You created a Plant! Nature is restored!", "Play Again"); initGame(); } } } }
-        function move(dir){ 
-            let m=false; const rot=dir===0?3:dir===1?2:dir===2?1:0; for(let i=0;i<rot;i++) rotate(); 
-            for(let r=0;r<4;r++){ 
-                let row=gameBoard[r].filter(v=>v); 
-                for(let i=0;i<row.length-1;i++){ 
-                    if(row[i]===row[i+1]){ 
-                        row[i]*=2; 
-                        let p = row[i]; gameScore += p; 
-                        // REALTIME POINT SAVE
-                        userData.points += p; saveToDB(); 
-                        row[i+1]=0; 
-                    } 
-                } row=row.filter(v=>v); while(row.length<4)row.push(0); 
-                if(JSON.stringify(gameBoard[r])!==JSON.stringify(row))m=true; gameBoard[r]=row; 
-            }
-            for(let i=0;i<(4-rot)%4;i++) rotate(); return m; 
-        }
+        function move(dir){ let m=false; const rot=dir===0?3:dir===1?2:dir===2?1:0; for(let i=0;i<rot;i++) rotate(); for(let r=0;r<4;r++){ let row=gameBoard[r].filter(v=>v); for(let i=0;i<row.length-1;i++){ if(row[i]===row[i+1]){ row[i]*=2; let p = row[i]; gameScore += p; userData.points += p; saveToDB(); row[i+1]=0; } } row=row.filter(v=>v); while(row.length<4)row.push(0); if(JSON.stringify(gameBoard[r])!==JSON.stringify(row))m=true; gameBoard[r]=row; } for(let i=0;i<(4-rot)%4;i++) rotate(); return m; }
         function rotate(){ let n=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; for(let r=0;r<4;r++)for(let c=0;c<4;c++)n[c][3-r]=gameBoard[r][c]; gameBoard=n; }
         
-        // --- POWERUPS ---
         window.powerupUndo = async () => { if(userData.tokens<1) return showToast("Need 1 Token"); if(!prevBoard) return showToast("Can't Undo"); userData.tokens-=1; await saveToDB(); gameBoard=JSON.parse(JSON.stringify(prevBoard)); gameScore=prevScore; drawBoard(); showToast("Undone!"); }
         window.powerupVacuum = async () => { if(userData.tokens<2) return showToast("Need 2 Tokens"); userData.tokens-=2; await saveToDB(); let rem=false; for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(gameBoard[r][c]===2||gameBoard[r][c]===4){gameBoard[r][c]=0;rem=true;} if(rem){drawBoard();showToast("Cleaned!");} }
         window.powerupShuffle = async () => { if(userData.tokens<3) return showToast("Need 3 Tokens"); userData.tokens-=3; await saveToDB(); let t=[]; for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(gameBoard[r][c]!==0)t.push(gameBoard[r][c]); t.sort(()=>Math.random()-0.5); gameBoard=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; let i=0; for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(i<t.length){gameBoard[r][c]=t[i];i++;} drawBoard(); showToast("Shuffled!"); }
 
-        // --- QUIZ LOGIC ---
         window.initQuiz = (id) => { activeQuiz=QUIZ_PACKAGES.find(p=>p.id===id); currentQIdx=0; quizAnswers=new Array(activeQuiz.questions.length).fill(null); document.getElementById('quiz-menu-card').classList.add('hidden'); document.getElementById('quiz-interface-card').classList.remove('hidden'); document.getElementById('active-quiz-title').innerText=activeQuiz.title; document.getElementById('quiz-result-view').classList.add('hidden'); document.getElementById('quiz-game-area').classList.remove('hidden'); renderQuestion(); }
         function renderQuestion() { const q=activeQuiz.questions[currentQIdx]; document.getElementById('q-progress-text').innerText=`Question ${currentQIdx+1}`; document.getElementById('q-text').innerText=q.q; const d=document.getElementById('q-options'); d.innerHTML=''; const done=quizAnswers[currentQIdx]!==null; q.options.forEach((o,i)=>{ let c="option-btn"; if(done){c+=" disabled"; c+=i===q.ans?" correct":i===quizAnswers[currentQIdx]?" wrong":"";} d.innerHTML+=`<button class="${c}" onclick="selectAnswer(${i})"><span class="option-marker">${['A','B','C','D'][i]}</span> ${o}</button>`; }); document.getElementById('btn-prev').style.visibility=currentQIdx===0?'hidden':'visible'; const last=currentQIdx===activeQuiz.questions.length-1; document.getElementById('btn-next').className=last?'hidden':'nav-btn btn-next'; document.getElementById('btn-submit-quiz').className=last?'btn-submit':'hidden'; }
         window.selectAnswer = (i) => { if(quizAnswers[currentQIdx]!==null)return; quizAnswers[currentQIdx]=i; if(i===activeQuiz.questions[currentQIdx].ans)showToast("Correct!"); else showToast("Wrong!"); renderQuestion(); }
@@ -471,8 +428,7 @@
         window.submitQuiz = async () => { if(quizAnswers.includes(null)){showToast("Answer all!");return;} let s=0; activeQuiz.questions.forEach((q,i)=>{if(quizAnswers[i]===q.ans)s+=10;}); if(!userData.completedQuizzes.includes(activeQuiz.id)){userData.completedQuizzes.push(activeQuiz.id); userData.points+=s; userData.tokens+=2; await saveToDB();} document.getElementById('quiz-game-area').classList.add('hidden'); document.getElementById('quiz-result-view').classList.remove('hidden'); document.getElementById('final-score-display').innerText=s; document.getElementById('reward-pts').innerText=s; triggerBalloons(); }
         window.closeQuiz = () => { document.getElementById('quiz-interface-card').classList.add('hidden'); document.getElementById('quiz-menu-card').classList.remove('hidden'); updateUI(); }
 
-        // --- UTILS ---
-        function updateEnvironment(max) { document.body.className = max>=64?'env-clean':max>=32?'env-moderate':'env-polluted'; }
+        function updateEnvironment(max) { const b=document.body; b.classList.remove('env-polluted','env-moderate','env-clean'); if(max>=64)b.classList.add('env-clean'); else if(max>=32)b.classList.add('env-moderate'); else b.classList.add('env-polluted'); }
         function checkNewDiscovery() { let max=0; gameBoard.forEach(r=>r.forEach(v=>{if(v>max)max=v;})); if(FACTS[max] && !userData.unlockedTiles.includes(max)){ userData.unlockedTiles.push(max); saveToDB(); showModal(FACTS[max].title, FACTS[max].text, "Nice!", FACTS[max].icon); } }
         window.showModal = (t, txt, b, e="🌟") => { document.getElementById('modal-emoji').innerText=e; document.getElementById('modal-title').innerText=t; document.getElementById('modal-text').innerText=txt; document.querySelector('.modal-btn').innerText=b; document.getElementById('modal-overlay').classList.remove('hidden'); }
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
