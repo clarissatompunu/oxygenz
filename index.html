@@ -296,6 +296,7 @@
         let userData = {};
         const CACHE_KEY = "oxygenz_user_session"; 
 
+        // DATA
         const FACTS = { 4: {title: "Car Pollution", icon: "🚗", text: "Did you know? Cars create a gas called CO2. It works like a thick blanket that warms up the Earth! 🌍"}, 8: {title: "Factory Smoke", icon: "🏭", text: "Factories make things we use, but they release lots of smoke. Filters can help catch the dirt before it flies away! 🏭"}, 16: {title: "Heavy Haze", icon: "😶‍🌫️", text: "Uh oh! Haze is like a dirty cloud on the ground. When it's hazy, wearing a mask helps you breathe safely! 😷"}, 32: {title: "Ozone Danger", icon: "⚡", text: "Zap! Ground-level Ozone is bad for your lungs. It forms when sunlight cooks car fumes on hot days! ☀️"}, 64: {title: "Lungs at Risk", icon: "🫁", text: "Your lungs are like pink sponges! Breathing dirty air makes them work too hard. Clean air keeps them happy! 💖"}, 128: {title: "Plant Power!", icon: "🌱", text: "Victory! Trees are superheroes. They eat the bad CO2 and give us fresh Oxygen. You saved the day! 🎉"} };
         const QUIZ_PACKAGES = [ { id: 1, title: "Indoor Air Quality", icon: "🏠", questions: [{q: "What is a common source of indoor pollution?", options: ["LED bulbs", "Cooking fumes", "Open windows", "Plants"], ans: 1}, {q: "Which toxic gas is odorless?", options: ["Carbon Monoxide", "Sulfur Dioxide", "Oxygen", "Helium"], ans: 0}, {q: "What does a HEPA filter do?", options: ["Heats air", "Traps particles", "Adds scent", "Measures temp"], ans: 1}, {q: "High humidity leads to?", options: ["Dust", "Mold", "Ozone", "Carbon"], ans: 1}, {q: "What are VOCs?", options: ["Vitamins", "Gases from paints", "Bacteria", "Solar energy"], ans: 1}] }, { id: 2, title: "Sustainable Living", icon: "🌱", questions: [{q: "Most effective '3 Rs'?", options: ["Recycle", "Reuse", "Reduce", "Repaint"], ans: 2}, {q: "Most efficient lightbulb?", options: ["Incandescent", "Halogen", "LED", "Fluorescent"], ans: 2}, {q: "What is Composting?", options: ["Burning trash", "Organic waste to soil", "Throwing plastic", "Compressing cans"], ans: 1}, {q: "Diet with lowest carbon footprint?", options: ["Plant-based", "Red meat", "Processed food", "Imported food"], ans: 0}, {q: "'Vampire Power' refers to?", options: ["Solar at night", "Electronics off but plugged", "Batteries leaking", "Bats"], ans: 1}] }, { id: 3, title: "Pollution & Health", icon: "🫁", questions: [{q: "Why is PM2.5 dangerous?", options: ["Radioactive", "Sharp", "Enters bloodstream", "Smells bad"], ans: 2}, {q: "Long-term pollution links to?", options: ["Better immune", "Respiratory disease", "Height", "Vision"], ans: 1}, {q: "Most vulnerable group?", options: ["Teenagers", "Children & Elderly", "Office workers", "Athletes"], ans: 1}, {q: "What is Smog?", options: ["Cloud", "Smoke + Fog", "Rock", "Rainstorm"], ans: 1}, {q: "Noise pollution causes?", options: ["Clean air", "Stress & Hearing loss", "Sleep", "Warming"], ans: 1}] }, { id: 4, title: "Energy & Resources", icon: "⚡", questions: [{q: "Which is renewable?", options: ["Coal", "Gas", "Wind Energy", "Nuclear"], ans: 2}, {q: "Disadvantage of fossil fuels?", options: ["Expensive", "Greenhouse gases", "Hard to find", "Renewable"], ans: 1}, {q: "Geothermal energy comes from?", options: ["Sun", "Wind", "Heat inside Earth", "Tides"], ans: 2}, {q: "Benefit of EVs?", options: ["Quieter", "Zero tailpipe emissions", "Faster", "No energy"], ans: 1}, {q: "Solar panels convert?", options: ["Light back to space", "Sunlight to electricity", "Heat roof", "Grow plants"], ans: 1}] } ];
         const CHALLENGES = [{id: 1, title: "Open Windows", desc: "Ventilate 10 mins", pts: 50, icon: "🪟"}, {id: 2, title: "Add Plant", desc: "Snake Plant", pts: 100, icon: "🪴"}, {id: 3, title: "Clean Dust", desc: "Wipe surfaces", pts: 75, icon: "🧹"}];
@@ -312,7 +313,7 @@
                 await setDoc(docRef, newData);
                 localStorage.setItem(CACHE_KEY, u); currentUser = u; userData = newData;
                 showDashboard(); showToast("Welcome to OxyGenZ! 🌿");
-            } catch(e) { console.error(e); showToast("Error connecting to DB"); }
+            } catch(e) { console.error(e); showToast("Error connecting to DB: " + e.message); }
             showLoading(false);
         }
 
@@ -326,10 +327,11 @@
                     localStorage.setItem(CACHE_KEY, u); currentUser = u; userData = docSnap.data();
                     showDashboard(); showToast(`Welcome back, ${u}! 👋`);
                 } else { showToast("Invalid Username or Password ❌"); }
-            } catch(e) { console.error(e); showToast("Login Error"); }
+            } catch(e) { console.error(e); showToast("Login Error: " + e.message); }
             showLoading(false);
         }
         window.handleLogout = () => { localStorage.removeItem(CACHE_KEY); location.reload(); }
+        
         window.onload = async () => {
             const cachedUser = localStorage.getItem(CACHE_KEY);
             if(cachedUser) {
@@ -381,11 +383,9 @@
             if(pid === 'game') {
                 window.addEventListener('keydown', handleGameKey); 
                 if(gameBoard.every(r=>r.every(v=>v===0))) initGame();
-                // Let game control background
                 let max = 0; gameBoard.forEach(r=>r.forEach(v=>{if(v>max)max=v;})); updateEnvironment(max);
             } else {
                 window.removeEventListener('keydown', handleGameKey);
-                // RESET BACKGROUND TO MINT FOR OTHER TABS
                 body.classList.remove('env-polluted', 'env-moderate', 'env-clean');
             }
 
@@ -408,6 +408,8 @@
         window.doChallenge = async (id, pts) => { userData.completedChallenges.push(id); userData.points+=pts; userData.cleaned+=20; userData.tokens+=3; await saveToDB(); showToast(`+${pts} Pts!`); triggerBalloons(); }
         
         let gameBoard=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; let gameScore=0; let prevBoard=null; let prevScore=0;
+        let activeQuiz = null; let currentQIdx = 0; let quizAnswers = [];
+
         window.initGame = () => { gameBoard=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; gameScore=0; prevBoard=null; addTile(); addTile(); drawBoard(); updateEnvironment(0); }
         function drawBoard(){ const d=document.getElementById('game-board'); d.innerHTML=''; let maxVal=0; gameBoard.forEach(r=>r.forEach(v=>{ if(v>maxVal)maxVal=v; const t=document.createElement('div'); t.className=`tile t-${v}`; t.innerText=v>0?getIcon(v):''; d.appendChild(t); })); document.getElementById('game-score').innerText=gameScore; updateEnvironment(maxVal); }
         function getIcon(v){ const i={2:'🌫️',4:'🚗',8:'🏭',16:'😶‍🌫️',32:'⚡',64:'🫁',128:'🌱'}; return i[v]||v; }
